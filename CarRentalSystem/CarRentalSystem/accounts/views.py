@@ -6,17 +6,23 @@ from django.contrib.auth import (
     get_user_model,
 )
 from .forms import UserLoginForm, UserRegisterForm
+from django.contrib import messages
+from django.contrib import messages
+
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
 
 def login_view(request):
-    form1 = UserLoginForm(request.POST or None)
-    if form1.is_valid():
-        username = form1.cleaned_data.get("username")
-        password = form1.cleaned_data.get("password")
-        user = authenticate(username=username, password=password)
-        if not request.user.is_staff:
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
             login(request, user)
-            return redirect("/car/newcar/")
-    return render(request, "form.html", {"form": form1, "title": "Login"})
+            return redirect('/car')  # Ganti 'home' sesuai dengan nama URL home Anda
+
+    return render(request, 'registration/login.html')
+
 
 def register_view(request):
     form = UserRegisterForm(request.POST or None)
@@ -31,15 +37,7 @@ def register_view(request):
         "title" : "Registration",
         "form": form,
     }
-    return render(request, "register.html", context)
-
-def registerPage(request):
-    context = {}
-    return render(request, 'register.html', context)
-
-def loginPage(request):
-    context = {}
-    return render(request, 'login.html', context)
+    return render(request, "form.html", context)
 
 def logout_view(request):
     logout(request)
