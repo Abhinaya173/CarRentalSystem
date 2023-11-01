@@ -41,8 +41,20 @@ INSTALLED_APPS = [
     'system',
     'django_seed',
     'accounts',
+    'django_q',
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+Q_CLUSTER = {
+    'name': 'CarRentalSystem',
+    'workers': 4,
+    'recycle': 500,
+    'timeout': 60,
+    'retry': 1200,
+    'queue_limit': 50,
+    'bulk': 10,
+    'schedule_type': 'django_q.tasks.cron.Cron',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
