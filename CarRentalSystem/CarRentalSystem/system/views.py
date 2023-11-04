@@ -2,9 +2,13 @@ from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse , HttpResponseRedirect
 from django.db.models import Q
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+
 
 from .models import Car, Order, PrivateMsg
 from .forms import CarForm, OrderForm, MessageForm
+
 
 
 def home(request):
@@ -269,3 +273,10 @@ def msg_delete(request,id=None):
     query = get_object_or_404(PrivateMsg, id=id)
     query.delete()
     return HttpResponseRedirect("/message/")
+
+@cache_page(60 * 15)  # Cache selama 15 menit
+def car_list(request):
+    if cars is None:
+        cars = Car.objects.all()
+        cache.set('car_list', cars, 60 * 15)  # Menyimpan hasil query di cache selama 15 menit
+    return render(request, 'car_list.html', {'cars': cars})
