@@ -1,5 +1,6 @@
 from django.db import models
 from django import forms
+from django.core.cache import cache
 
 def uploaded_location(instance, filename):
     return ("%s/%s") %(instance.car_name,filename)
@@ -20,6 +21,16 @@ class Car(models.Model):
 
     def get_absolute_url(self):
         return "/car/%s/" % (self.id)
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Hapus cache 'car_list' saat objek Car disimpan.
+        cache.delete('car_list')
+
+    def delete(self, *args, **kwargs):
+        # Hapus cache 'car_list' saat objek Car dihapus.
+        cache.delete('car_list')
+        super().delete(*args, **kwargs)
 
 class Order(models.Model):
     car_name = models.CharField(max_length=100)
