@@ -56,6 +56,18 @@ Q_CLUSTER = {
     'schedule_type': 'django_q.tasks.cron.Cron',
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -86,6 +98,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'car_rental_app.wsgi.application'
+
+LOGIN_REDIRECT_URL = 'home'
 
 
 # Database
