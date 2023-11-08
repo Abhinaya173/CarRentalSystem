@@ -1,17 +1,11 @@
-from django_q.tasks import schedule
-from system.models import Car 
+from celery import shared_task
+from django.utils import timezone
+from django.contrib.auth.models import User
 
-def update_car_data():
-    cars_to_update = Car.objects.all()
+@shared_task
+def auto_logout_users():
+    twelve_hours_ago = timezone.now() - timezone.timedelta(hours=12)
+    users_to_logout = User.objects.filter(last_login__lt=twelve_hours_ago)
 
-    for car in cars_to_update:
-        new_stock = get_new_stock(car)
-
-        if new_stock != car.content:
-            car.content = new_stock
-            car.save()
-        else:
-            pass
-        
-# Jadwalkan tugas untuk setiap weekdays (Senin sampai Jumat) pukul 00:00
-schedule('myapp.tasks.update_car_data', schedule_type='cron', cron='0 0 * * 1-5')
+    for user in users_to_logout:
+        user.auth_token_set.all().delete()
