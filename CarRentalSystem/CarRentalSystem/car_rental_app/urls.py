@@ -20,6 +20,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from system.views import admin_car_list, admin_msg, order_list, car_created, order_update, order_delete, msg_delete
 from accounts.views import (login_view, register_view, logout_view)
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStacks
+from consumers import consumers
 
 urlpatterns = [
     path('admin/',admin.site.urls),
@@ -35,8 +38,18 @@ urlpatterns = [
     path('register/', register_view, name='register'),
     path('accounts/', include ('django.contrib.auth.urls')),
     path('accounts/', include('accounts.urls')),
+    
 
 ]
+
+application = ProtocolTypeRouter({
+    "websocket": AuthMiddlewareStack(
+        URLRouter(
+            consumers.websocket_urlpatterns
+        )
+    ),
+})
+
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
