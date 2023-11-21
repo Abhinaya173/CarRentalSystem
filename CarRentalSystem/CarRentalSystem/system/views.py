@@ -1,9 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse , HttpResponseRedirect
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
+from .forms import RegistrasiForm
 
 
 from .models import Car, Order, PrivateMsg
@@ -280,3 +281,14 @@ def car_list(request):
         cars = Car.objects.all()
         cache.set('car_list', cars, 60 * 15)  # Menyimpan hasil query di cache selama 15 menit
     return render(request, 'car_list.html', {'cars': cars})
+
+def registrasi_event(request):
+    if request.method == 'POST':
+        form = RegistrasiForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('konfirmasi_registrasi')  # ganti dengan nama halaman konfirmasi
+    else:
+        form = RegistrasiForm()
+
+    return render(request, 'registrasi_event.html', {'form': form})

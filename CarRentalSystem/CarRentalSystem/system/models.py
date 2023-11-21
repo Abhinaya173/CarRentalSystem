@@ -50,3 +50,13 @@ class PrivateMsg(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField()
     message = models.TextField()
+
+class Event(models.Model):
+    nama = models.CharField(max_length=100)
+    tanggal = models.DateField()
+    lokasi = models.CharField(max_length=255)
+
+class Registrasi(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    nama_peserta = models.CharField(max_length=100)
+    email_peserta = models.EmailField()

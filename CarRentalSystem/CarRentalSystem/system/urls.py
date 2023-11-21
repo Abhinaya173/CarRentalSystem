@@ -1,9 +1,11 @@
 from django.urls import path, re_path
 from django.contrib import admin
+from .views import registrasi_event
 from .import views
 
 urlpatterns = [
     path('', views.home, name = 'home'),
+    path('registrasi/', registrasi_event, name='registrasi_event'),
 
     path('carlist/', views.car_list, name = "car_list"),
     path('createOrder/', views.order_created, name = "order_create"),
